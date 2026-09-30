@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cineverse | Movie Review & Recommendation Database</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="navbar">
+
+        <a href="#home" class="logo">
+            <span>◆</span> CINEVERSE
+        </a>
+
+        <nav>
+            <a href="#home">HOME</a>
+            <a href="#movies">MOVIES</a>
+            <a href="#recommendations">RECOMMENDATIONS</a>
+            <a href="#reviews">REVIEWS</a>
+        </nav>
+
+        <div class="nav-actions">
+
+            <button class="watchlist-nav" onclick="showWatchlist()">
+                ♡ <span id="watchlistCount">0</span>
+            </button>
+
+            <button class="login-btn" onclick="openLogin()">
+                LOGIN
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= HERO ================= -->
+
+    <main>
+
+        <section class="hero" id="home">
+
+            <div class="hero-content">
+
+                <div class="system-status">
+                    <span class="status-dot"></span>
+                    DATABASE SYSTEM ONLINE
+                </div>
+
+                <p class="eyebrow">MOVIE DISCOVERY SYSTEM / 01</p>
+
+                <h1>
+                    DISCOVER.
+                    <span>REVIEW.</span>
+                    ENJOY.
+                </h1>
+
+                <p class="hero-description">
+                    Explore movies, read community reviews, build your
+                    watchlist and discover your next cinematic experience.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <button class="primary-btn" onclick="scrollToMovies()">
+                        EXPLORE MOVIES
+                    </button>
+
+                    <button class="secondary-btn" onclick="scrollToRecommendations()">
+                        GET RECOMMENDATIONS
+                    </button>
+
+                </div>
+
+                <div class="hero-stats">
+
+                    <div>
+                        <strong>10K+</strong>
+                        <span>MOVIES</span>
+                    </div>
+
+                    <div>
+                        <strong>50K+</strong>
+                        <span>REVIEWS</span>
+                    </div>
+
+                    <div>
+                        <strong>25K+</strong>
+                        <span>USERS</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="hero-visual">
+
+                <div class="orbit orbit-one"></div>
+                <div class="orbit orbit-two"></div>
+
+                <div class="core">
+
+                    <div class="core-icon">▶</div>
+
+                    <span>MOVIE<br>DATABASE</span>
+
+                </div>
+
+                <div class="floating-card">
+
+                    <span>TOP RATED</span>
+
+                    <strong>★ 4.8</strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= SEARCH ================= -->
+
+        <section class="search-section">
+
+            <div class="search-container">
+
+                <span class="search-icon">⌕</span>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search movies, genres, years..."
+                    autocomplete="off"
+                >
+
+                <button onclick="searchMovies()">
+                    SEARCH
+                </button>
+
+            </div>
+
+            <p id="searchMessage"></p>
+
+        </section>
+
+
+        <!-- ================= MOVIES ================= -->
+
+        <section class="section" id="movies">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="section-label">DATABASE / 02</p>
+
+                    <h2>
+                        FEATURED <span>MOVIES</span>
+                    </h2>
+                </div>
+
+                <div class="movie-count">
+                    <span id="movieCount">6</span> MOVIES FOUND
+                </div>
+
+            </div>
+
+
+            <div class="filters">
+
+                <button class="filter active" data-genre="All">
+                    ALL
+                </button>
+
+                <button class="filter" data-genre="Action">
+                    ACTION
+                </button>
+
+                <button class="filter" data-genre="Sci-Fi">
+                    SCI-FI
+                </button>
+
+                <button class="filter" data-genre="Thriller">
+                    THRILLER
+                </button>
+
+                <button class="filter" data-genre="Adventure">
+                    ADVENTURE
+                </button>
+
+                <button class="filter" data-genre="Drama">
+                    DRAMA
+                </button>
+
+            </div>
+
+
+            <div class="movie-grid" id="movieGrid"></div>
+
+        </section>
+
+
+        <!-- ================= RECOMMENDATIONS ================= -->
+
+        <section class="recommendation" id="recommendations">
+
+            <div class="recommend-content">
+
+                <p class="section-label">
+                    AI RECOMMENDATION ENGINE / 03
+                </p>
+
+                <h2>
+                    YOUR NEXT
+                    <span>MISSION</span>
+                </h2>
+
+                <p>
+                    Choose your preferred genre and Cineverse will
+                    generate movie recommendations based on your taste.
+                </p>
+
+                <div class="preference-buttons">
+
+                    <button onclick="recommend('Action')">
+                        ACTION
+                    </button>
+
+                    <button onclick="recommend('Sci-Fi')">
+                        SCI-FI
+                    </button>
+
+                    <button onclick="recommend('Thriller')">
+                        THRILLER
+                    </button>
+
+                    <button onclick="recommend('Adventure')">
+                        ADVENTURE
+                    </button>
+
+                    <button onclick="recommend('Drama')">
+                        DRAMA
+                    </button>
+
+                </div>
+
+                <div id="recommendationResult"></div>
+
+            </div>
+
+
+            <div class="engine">
+
+                <div class="scan-line"></div>
+
+                <p>RECOMMENDATION ENGINE</p>
+
+                <strong>READY</strong>
+
+                <span>
+                    ● DATABASE CONNECTED
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= WATCHLIST ================= -->
+
+        <section class="section watchlist-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="section-label">
+                        PERSONAL DATABASE / 04
+                    </p>
+
+                    <h2>
+                        MY <span>WATCHLIST</span>
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <div id="watchlistArea" class="watchlist-area">
+
+                <div class="empty-watchlist">
+
+                    <div>♡</div>
+
+                    <p>
+                        Your watchlist is empty.
+                    </p>
+
+                    <small>
+                        Add movies you want to watch later.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= REVIEWS ================= -->
+
+        <section class="section" id="reviews">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="section-label">
+                        COMMUNITY / 05
+                    </p>
+
+                    <h2>
+                        LATEST <span>REVIEWS</span>
+                    </h2>
+
+                </div>
+
+                <button class="review-btn" onclick="openReview()">
+                    + WRITE REVIEW
+                </button>
+
+            </div>
+
+
+            <div class="reviews-grid">
+
+                <article class="review-card">
+
+                    <div class="review-user">
+
+                        <div class="avatar">A</div>
+
+                        <div>
+                            <strong>ARJUN</strong>
+                            <small>2 HOURS AGO</small>
+                        </div>
+
+                    </div>
+
+                    <div class="stars">
+                        ★★★★★
+                    </div>
+
+                    <p>
+                        "One of the best cinematic experiences.
+                        The visuals and story are incredible."
+                    </p>
+
+                    <span>INTERSTELLAR</span>
+
+                </article>
+
+
+                <article class="review-card">
+
+                    <div class="review-user">
+
+                        <div class="avatar">R</div>
+
+                        <div>
+                            <strong>ROHAN</strong>
+                            <small>5 HOURS AGO</small>
+                        </div>
+
+                    </div>
+
+                    <div class="stars">
+                        ★★★★☆
+                    </div>
+
+                    <p>
+                        "Amazing concept and incredible visuals.
+                        Definitely worth watching."
+                    </p>
+
+                    <span>DUNE</span>
+
+                </article>
+
+
+                <article class="review-card">
+
+                    <div class="review-user">
+
+                        <div class="avatar">S</div>
+
+                        <div>
+                            <strong>SAHIL</strong>
+                            <small>1 DAY AGO</small>
+                        </div>
+
+                    </div>
+
+                    <div class="stars">
+                        ★★★★★
+                    </div>
+
+                    <p>
+                        "The perfect combination of action,
+                        characters and storytelling."
+                    </p>
+
+                    <span>AVENGERS: ENDGAME</span>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= DATABASE INFO ================= -->
+
+        <section class="database-panel">
+
+            <div>
+
+                <p class="section-label">
+                    SYSTEM INFORMATION
+                </p>
+
+                <h2>
+                    CINEVERSE <span>DATABASE</span>
+                </h2>
+
+            </div>
+
+
+            <div class="database-stats">
+
+                <div>
+                    <strong>10,000+</strong>
+                    <span>MOVIES</span>
+                </div>
+
+                <div>
+                    <strong>50,000+</strong>
+                    <span>REVIEWS</span>
+                </div>
+
+                <div>
+                    <strong>25,000+</strong>
+                    <span>USERS</span>
+                </div>
+
+                <div>
+                    <strong>99.9%</strong>
+                    <span>UPTIME</span>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= MOVIE MODAL ================= -->
+
+    <div class="modal" id="movieModal">
+
+        <div class="modal-box">
+
+            <button class="close-btn" onclick="closeModal()">
+                ×
+            </button>
+
+            <p class="section-label">
+                MOVIE DATABASE RECORD
+            </p>
+
+            <h2 id="modalTitle">
+                Movie Title
+            </h2>
+
+            <div class="modal-meta" id="modalMeta"></div>
+
+            <div class="modal-rating" id="modalRating"></div>
+
+            <p id="modalDescription"></p>
+
+            <div class="modal-actions">
+
+                <button class="primary-btn" id="modalWatchlist">
+                    ♡ ADD TO WATCHLIST
+                </button>
+
+                <button class="secondary-btn" onclick="openReview()">
+                    WRITE REVIEW
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= LOGIN MODAL ================= -->
+
+    <div class="modal" id="loginModal">
+
+        <div class="modal-box login-box">
+
+            <button class="close-btn" onclick="closeLogin()">
+                ×
+            </button>
+
+            <p class="section-label">
+                USER ACCESS
+            </p>
+
+            <h2>
+                LOGIN <span>TO CINEVERSE</span>
+            </h2>
+
+            <input
+                type="text"
+                id="username"
+                placeholder="Username"
+            >
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Email"
+            >
+
+            <button
+                class="primary-btn login-submit"
+                onclick="loginUser()"
+            >
+                ENTER SYSTEM
+            </button>
+
+            <p id="loginMessage"></p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= REVIEW MODAL ================= -->
+
+    <div class="modal" id="reviewModal">
+
+        <div class="modal-box review-box">
+
+            <button class="close-btn" onclick="closeReview()">
+                ×
+            </button>
+
+            <p class="section-label">
+                COMMUNITY DATABASE
+            </p>
+
+            <h2>
+                WRITE A <span>REVIEW</span>
+            </h2>
+
+            <select id="reviewMovie">
+
+                <option>Interstellar</option>
+                <option>Inception</option>
+                <option>Avengers: Endgame</option>
+                <option>The Batman</option>
+                <option>Avatar</option>
+                <option>Dune</option>
+
+            </select>
+
+
+            <select id="reviewRating">
+
+                <option value="5">★★★★★ - 5/5</option>
+                <option value="4">★★★★☆ - 4/5</option>
+                <option value="3">★★★☆☆ - 3/5</option>
+                <option value="2">★★☆☆☆ - 2/5</option>
+                <option value="1">★☆☆☆☆ - 1/5</option>
+
+            </select>
+
+
+            <textarea
+                id="reviewText"
+                placeholder="Write your review..."
+            ></textarea>
+
+
+            <button
+                class="primary-btn"
+                onclick="submitReview()"
+            >
+                SUBMIT REVIEW
+            </button>
+
+            <p id="reviewMessage"></p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-logo">
+            ◆ CINEVERSE
+        </div>
+
+        <p>
+            MOVIE REVIEW & RECOMMENDATION DATABASE
+        </p>
+
+        <small>
+            DBMS MICRO PROJECT • MSBTE K-SCHEME • AIML
+        </small>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
