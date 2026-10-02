@@ -1629,9 +1629,8 @@ async function submitReview() {
         "SAVING REVIEW...";
 
 
-    message.textContent =
-        "SUBMITTING TO THE CINEVERSE DATABASE...";
-
+   message.textContent =
+    "SUBMITTING REVIEW...";
 
     try {
 
@@ -1659,8 +1658,8 @@ async function submitReview() {
         );
 
 
-        message.textContent =
-            "REVIEW SUBMITTED SUCCESSFULLY ✓";
+       message.textContent =
+    "REVIEW SUBMITTED ✓";
 
 
         document.getElementById(
@@ -1673,10 +1672,9 @@ async function submitReview() {
         await loadStats();
 
 
-        showToast(
-            "Your review was saved to the Cineverse database."
-        );
-
+       showToast(
+    "Review submitted successfully ✓"
+);
 
         setTimeout(
             () => {
