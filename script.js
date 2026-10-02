@@ -1,6 +1,7 @@
+javascript
 /* =====================================================
    CINEVERSE - DATABASE CONNECTED APPLICATION
-   Flask + PyMySQL + XAMPP MariaDB
+   Flask + PyMySQL + Aiven MySQL / XAMPP MariaDB
    ===================================================== */
 
 let movies = [];
@@ -97,14 +98,25 @@ async function loadMovies() {
 
         renderMovies(currentMovies);
 
-        status.textContent =
-            "DATABASE SYSTEM ONLINE";
+        /* Populate review dropdown from database */
+        populateReviewMovieDropdown();
 
-        apiStatus.textContent =
-            "● ONLINE";
 
-        dbStatus.textContent =
-            "● DATABASE CONNECTED";
+        if (status) {
+            status.textContent =
+                "DATABASE SYSTEM ONLINE";
+        }
+
+        if (apiStatus) {
+            apiStatus.textContent =
+                "● ONLINE";
+        }
+
+        if (dbStatus) {
+            dbStatus.textContent =
+                "● DATABASE CONNECTED";
+        }
+
 
     } catch (error) {
 
@@ -113,14 +125,20 @@ async function loadMovies() {
 
         renderMovies([]);
 
-        status.textContent =
-            "DATABASE CONNECTION ERROR";
+        if (status) {
+            status.textContent =
+                "DATABASE CONNECTION ERROR";
+        }
 
-        apiStatus.textContent =
-            "● OFFLINE";
+        if (apiStatus) {
+            apiStatus.textContent =
+                "● OFFLINE";
+        }
 
-        dbStatus.textContent =
-            "● DATABASE ERROR";
+        if (dbStatus) {
+            dbStatus.textContent =
+                "● DATABASE ERROR";
+        }
 
         console.error(
             "Movie loading error:",
@@ -132,6 +150,82 @@ async function loadMovies() {
 }
 
 
+/* =====================================================
+   POPULATE REVIEW MOVIE DROPDOWN
+   ===================================================== */
+
+function populateReviewMovieDropdown() {
+
+    const select =
+        document.getElementById("reviewMovie");
+
+
+    if (!select) {
+        return;
+    }
+
+
+    select.innerHTML = "";
+
+
+    if (!movies.length) {
+
+        const option =
+            document.createElement("option");
+
+        option.value = "";
+        option.textContent =
+            "No movies available";
+
+        select.appendChild(option);
+
+        return;
+
+    }
+
+
+    const placeholder =
+        document.createElement("option");
+
+    placeholder.value = "";
+    placeholder.textContent =
+        "Select a movie";
+
+    select.appendChild(
+        placeholder
+    );
+
+
+    movies.forEach(movie => {
+
+        const option =
+            document.createElement("option");
+
+        /*
+         * The movie title is used as the value
+         * because the existing review API expects
+         * the movie name.
+         */
+
+        option.value =
+            movie.title;
+
+        option.textContent =
+            movie.title;
+
+        select.appendChild(
+            option
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   MOVIE RENDERING
+   ===================================================== */
+
 function renderMovies(movieList) {
 
     const grid =
@@ -141,10 +235,18 @@ function renderMovies(movieList) {
         document.getElementById("movieCount");
 
 
+    if (!grid) {
+        return;
+    }
+
+
     grid.innerHTML = "";
 
-    count.textContent =
-        movieList.length;
+
+    if (count) {
+        count.textContent =
+            movieList.length;
+    }
 
 
     if (movieList.length === 0) {
@@ -172,11 +274,16 @@ function renderMovies(movieList) {
         (movie, index) => {
 
             const saved =
-                watchlist.includes(movie.id);
+                watchlist.includes(
+                    Number(movie.id)
+                );
 
 
             const card =
-                document.createElement("article");
+                document.createElement(
+                    "article"
+                );
+
 
             card.className =
                 "movie-card";
@@ -254,7 +361,10 @@ function renderMovies(movieList) {
 
             `;
 
-            grid.appendChild(card);
+
+            grid.appendChild(
+                card
+            );
 
         }
     );
@@ -284,7 +394,9 @@ function setupFilters() {
                         );
 
 
-                    this.classList.add("active");
+                    this.classList.add(
+                        "active"
+                    );
 
 
                     const genre =
@@ -296,7 +408,9 @@ function setupFilters() {
                             ? [...movies]
                             : movies.filter(
                                 movie =>
-                                    movie.genre.includes(genre)
+                                    movie.genre.includes(
+                                        genre
+                                    )
                             );
 
 
@@ -305,9 +419,16 @@ function setupFilters() {
                     );
 
 
-                    document.getElementById(
-                        "searchMessage"
-                    ).textContent = "";
+                    const searchMessage =
+                        document.getElementById(
+                            "searchMessage"
+                        );
+
+
+                    if (searchMessage) {
+                        searchMessage.textContent =
+                            "";
+                    }
 
                 }
             );
@@ -329,6 +450,11 @@ function setupSearch() {
         );
 
 
+    if (!input) {
+        return;
+    }
+
+
     input.addEventListener(
         "keypress",
         function (event) {
@@ -347,25 +473,43 @@ function setupSearch() {
 
 function searchMovies() {
 
+    const input =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
     const query =
-        document
-            .getElementById("searchInput")
-            .value
+        input.value
             .toLowerCase()
             .trim();
 
 
     if (!query) {
 
-        currentMovies = [...movies];
+        currentMovies =
+            [...movies];
 
         renderMovies(
             currentMovies
         );
 
-        document.getElementById(
-            "searchMessage"
-        ).textContent = "";
+
+        const searchMessage =
+            document.getElementById(
+                "searchMessage"
+            );
+
+
+        if (searchMessage) {
+            searchMessage.textContent =
+                "";
+        }
 
         return;
     }
@@ -410,10 +554,14 @@ function searchMovies() {
         );
 
 
-    message.textContent =
-        currentMovies.length
-            ? `${currentMovies.length} MOVIE(S) FOUND FOR "${query.toUpperCase()}"`
-            : `NO RESULTS FOUND FOR "${query.toUpperCase()}"`;
+    if (message) {
+
+        message.textContent =
+            currentMovies.length
+                ? `${currentMovies.length} MOVIE(S) FOUND FOR "${query.toUpperCase()}"`
+                : `NO RESULTS FOUND FOR "${query.toUpperCase()}"`;
+
+    }
 
 }
 
@@ -468,7 +616,7 @@ async function openMovie(id) {
 
         const saved =
             watchlist.includes(
-                movie.id
+                Number(movie.id)
             );
 
 
@@ -498,6 +646,11 @@ async function openMovie(id) {
         console.error(
             "Movie detail error:",
             error
+        );
+
+        showToast(
+            error.message ||
+            "Unable to load movie details."
         );
 
     }
@@ -598,7 +751,9 @@ async function toggleWatchlist(id) {
     try {
 
         if (
-            watchlist.includes(movieId)
+            watchlist.includes(
+                movieId
+            )
         ) {
 
             await api(
@@ -684,10 +839,18 @@ async function toggleWatchlist(id) {
 
 function updateWatchlistCount() {
 
-    document.getElementById(
-        "watchlistCount"
-    ).textContent =
-        watchlist.length;
+    const count =
+        document.getElementById(
+            "watchlistCount"
+        );
+
+
+    if (count) {
+
+        count.textContent =
+            watchlist.length;
+
+    }
 
 }
 
@@ -697,11 +860,19 @@ function showWatchlist() {
     renderWatchlist();
 
 
-    document
-        .querySelector(".watchlist-section")
-        .scrollIntoView({
+    const section =
+        document.querySelector(
+            ".watchlist-section"
+        );
+
+
+    if (section) {
+
+        section.scrollIntoView({
             behavior: "smooth"
         });
+
+    }
 
 }
 
@@ -712,6 +883,11 @@ function renderWatchlist() {
         document.getElementById(
             "watchlistArea"
         );
+
+
+    if (!area) {
+        return;
+    }
 
 
     if (!currentUser) {
@@ -746,7 +922,7 @@ function renderWatchlist() {
         movies.filter(
             movie =>
                 watchlist.includes(
-                    movie.id
+                    Number(movie.id)
                 )
         );
 
@@ -834,6 +1010,11 @@ async function recommend(genre) {
         );
 
 
+    if (!status || !result) {
+        return;
+    }
+
+
     status.textContent =
         "QUERYING DATABASE...";
 
@@ -901,7 +1082,7 @@ async function recommend(genre) {
                             ? movie.genre
                                 .map(escapeHtml)
                                 .join(" / ")
-                            : genre
+                            : escapeHtml(genre)
                     }
 
                 </span>
@@ -969,18 +1150,29 @@ function restoreUserSession() {
 
 async function loginUser() {
 
+    const usernameElement =
+        document.getElementById(
+            "username"
+        );
+
+
+    const emailElement =
+        document.getElementById(
+            "email"
+        );
+
+
+    if (!usernameElement || !emailElement) {
+        return;
+    }
+
+
     const username =
-        document
-            .getElementById("username")
-            .value
-            .trim();
+        usernameElement.value.trim();
 
 
     const email =
-        document
-            .getElementById("email")
-            .value
-            .trim();
+        emailElement.value.trim();
 
 
     if (!username || !email) {
@@ -996,7 +1188,9 @@ async function loginUser() {
 
 
     if (
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+            email
+        )
     ) {
 
         setLoginMessage(
@@ -1129,6 +1323,11 @@ function updateAccountUI() {
         );
 
 
+    if (!guest || !user) {
+        return;
+    }
+
+
     if (!currentUser) {
 
         guest.style.display =
@@ -1150,18 +1349,34 @@ function updateAccountUI() {
         "flex";
 
 
-    document.getElementById(
-        "profileName"
-    ).textContent =
-        currentUser.username.toUpperCase();
+    const profileName =
+        document.getElementById(
+            "profileName"
+        );
 
 
-    document.getElementById(
-        "profileInitial"
-    ).textContent =
-        currentUser.username
-            .charAt(0)
-            .toUpperCase();
+    const profileInitial =
+        document.getElementById(
+            "profileInitial"
+        );
+
+
+    if (profileName) {
+
+        profileName.textContent =
+            currentUser.username.toUpperCase();
+
+    }
+
+
+    if (profileInitial) {
+
+        profileInitial.textContent =
+            currentUser.username
+                .charAt(0)
+                .toUpperCase();
+
+    }
 
 }
 
@@ -1270,6 +1485,11 @@ function setLoginMessage(
         );
 
 
+    if (!element) {
+        return;
+    }
+
+
     element.textContent =
         message;
 
@@ -1290,6 +1510,11 @@ async function loadReviews() {
         document.getElementById(
             "reviewsGrid"
         );
+
+
+    if (!grid) {
+        return;
+    }
 
 
     try {
@@ -1560,6 +1785,10 @@ async function loadReviews() {
 }
 
 
+/* =====================================================
+   SUBMIT REVIEW
+   ===================================================== */
+
 async function submitReview() {
 
     if (!currentUser) {
@@ -1576,27 +1805,22 @@ async function submitReview() {
     }
 
 
-    const movie =
+    const movieElement =
         document.getElementById(
             "reviewMovie"
-        ).value;
-
-
-    const rating =
-        Number(
-            document.getElementById(
-                "reviewRating"
-            ).value
         );
 
 
-    const text =
-        document
-            .getElementById(
-                "reviewText"
-            )
-            .value
-            .trim();
+    const ratingElement =
+        document.getElementById(
+            "reviewRating"
+        );
+
+
+    const textElement =
+        document.getElementById(
+            "reviewText"
+        );
 
 
     const message =
@@ -1609,6 +1833,51 @@ async function submitReview() {
         document.getElementById(
             "submitReviewBtn"
         );
+
+
+    if (
+        !movieElement ||
+        !ratingElement ||
+        !textElement ||
+        !message ||
+        !button
+    ) {
+        return;
+    }
+
+
+    const movie =
+        movieElement.value;
+
+
+    const rating =
+        Number(
+            ratingElement.value
+        );
+
+
+    const text =
+        textElement.value.trim();
+
+
+    if (!movie) {
+
+        message.textContent =
+            "PLEASE SELECT A MOVIE.";
+
+        return;
+
+    }
+
+
+    if (!rating || rating < 1 || rating > 5) {
+
+        message.textContent =
+            "PLEASE SELECT A VALID RATING.";
+
+        return;
+
+    }
 
 
     if (!text) {
@@ -1629,8 +1898,9 @@ async function submitReview() {
         "SAVING REVIEW...";
 
 
-   message.textContent =
-    "SUBMITTING REVIEW...";
+    message.textContent =
+        "SUBMITTING REVIEW...";
+
 
     try {
 
@@ -1647,9 +1917,11 @@ async function submitReview() {
                         email:
                             currentUser.email,
 
-                        movie,
+                        movie:
+                            movie,
 
-                        rating,
+                        rating:
+                            rating,
 
                         review:
                             text
@@ -1658,13 +1930,16 @@ async function submitReview() {
         );
 
 
-       message.textContent =
-    "REVIEW SUBMITTED ✓";
+        /*
+         * Keep the user-facing result simple.
+         */
+
+        message.textContent =
+            "REVIEW SUBMITTED ✓";
 
 
-        document.getElementById(
-            "reviewText"
-        ).value = "";
+        textElement.value =
+            "";
 
 
         await loadReviews();
@@ -1672,9 +1947,10 @@ async function submitReview() {
         await loadStats();
 
 
-       showToast(
-    "Review submitted successfully ✓"
-);
+        showToast(
+            "Review submitted successfully ✓"
+        );
+
 
         setTimeout(
             () => {
@@ -1690,6 +1966,12 @@ async function submitReview() {
 
 
     } catch (error) {
+
+        console.error(
+            "Review submission error:",
+            error
+        );
+
 
         message.textContent =
             `SUBMISSION FAILED: ${error.message}`;
@@ -1707,6 +1989,10 @@ async function submitReview() {
 }
 
 
+/* =====================================================
+   OPEN REVIEW MODAL
+   ===================================================== */
+
 function openReview() {
 
     if (!currentUser) {
@@ -1723,40 +2009,60 @@ function openReview() {
     }
 
 
+    /*
+     * If the user opened the review form
+     * from a movie's details page,
+     * automatically select that movie.
+     */
+
     if (selectedMovie) {
 
-        const option =
-            [
-                ...document
-                    .getElementById(
-                        "reviewMovie"
-                    )
-                    .options
-            ]
-                .find(
-                    item =>
-                        item.text
-                            .toLowerCase() ===
-                        selectedMovie.title
-                            .toLowerCase()
-                );
-
-
-        if (option) {
-
+        const select =
             document.getElementById(
                 "reviewMovie"
-            ).value =
-                option.value;
+            );
+
+
+        if (select) {
+
+            const matchingOption =
+                [
+                    ...select.options
+                ]
+                    .find(
+                        item =>
+                            item.text
+                                .toLowerCase()
+                                ===
+                            selectedMovie.title
+                                .toLowerCase()
+                    );
+
+
+            if (matchingOption) {
+
+                select.value =
+                    matchingOption.value;
+
+            }
 
         }
 
     }
 
 
-    document.getElementById(
-        "reviewMessage"
-    ).textContent = "";
+    const message =
+        document.getElementById(
+            "reviewMessage"
+        );
+
+
+    if (message) {
+
+        message.textContent =
+            "";
+
+    }
 
 
     document
@@ -1787,54 +2093,79 @@ async function loadStats() {
             await api("/stats");
 
 
-        document.getElementById(
-            "heroMovieCount"
-        ).textContent =
-            stats.total_movies;
+        const elements = {
+
+            heroMovieCount:
+                stats.total_movies,
+
+            heroReviewCount:
+                stats.total_reviews,
+
+            heroUserCount:
+                stats.total_users,
+
+            databaseMovieCount:
+                stats.total_movies,
+
+            databaseReviewCount:
+                stats.total_reviews,
+
+            databaseUserCount:
+                stats.total_users
+
+        };
 
 
-        document.getElementById(
-            "heroReviewCount"
-        ).textContent =
-            stats.total_reviews;
+        Object.entries(
+            elements
+        ).forEach(
+            ([id, value]) => {
+
+                const element =
+                    document.getElementById(
+                        id
+                    );
 
 
-        document.getElementById(
-            "heroUserCount"
-        ).textContent =
-            stats.total_users;
+                if (element) {
+
+                    element.textContent =
+                        value;
+
+                }
+
+            }
+        );
 
 
-        document.getElementById(
-            "databaseMovieCount"
-        ).textContent =
-            stats.total_movies;
+        const status =
+            document.getElementById(
+                "databaseStatus"
+            );
 
 
-        document.getElementById(
-            "databaseReviewCount"
-        ).textContent =
-            stats.total_reviews;
+        if (status) {
 
+            status.textContent =
+                "ONLINE";
 
-        document.getElementById(
-            "databaseUserCount"
-        ).textContent =
-            stats.total_users;
-
-
-        document.getElementById(
-            "databaseStatus"
-        ).textContent =
-            "ONLINE";
+        }
 
 
     } catch (error) {
 
-        document.getElementById(
-            "databaseStatus"
-        ).textContent =
-            "OFFLINE";
+        const status =
+            document.getElementById(
+                "databaseStatus"
+            );
+
+
+        if (status) {
+
+            status.textContent =
+                "OFFLINE";
+
+        }
 
 
         console.error(
@@ -1853,22 +2184,38 @@ async function loadStats() {
 
 function scrollToMovies() {
 
-    document
-        .getElementById("movies")
-        .scrollIntoView({
+    const element =
+        document.getElementById(
+            "movies"
+        );
+
+
+    if (element) {
+
+        element.scrollIntoView({
             behavior: "smooth"
         });
+
+    }
 
 }
 
 
 function scrollToRecommendations() {
 
-    document
-        .getElementById("recommendations")
-        .scrollIntoView({
+    const element =
+        document.getElementById(
+            "recommendations"
+        );
+
+
+    if (element) {
+
+        element.scrollIntoView({
             behavior: "smooth"
         });
+
+    }
 
 }
 
@@ -1890,8 +2237,12 @@ function starString(rating) {
 
 
     return (
-        "★".repeat(safeRating) +
-        "☆".repeat(5 - safeRating)
+        "★".repeat(
+            Math.round(safeRating)
+        ) +
+        "☆".repeat(
+            5 - Math.round(safeRating)
+        )
     );
 
 }
@@ -1913,7 +2264,9 @@ function formatDate(value) {
             date.getTime()
         )
     ) {
+
         return "RECENTLY";
+
     }
 
 
@@ -1927,11 +2280,26 @@ function escapeHtml(value) {
     return String(
         value ?? ""
     )
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 
 }
 
@@ -2066,28 +2434,36 @@ window.addEventListener(
         if (
             event.target === movieModal
         ) {
+
             closeModal();
+
         }
 
 
         if (
             event.target === loginModal
         ) {
+
             closeLogin();
+
         }
 
 
         if (
             event.target === reviewModal
         ) {
+
             closeReview();
+
         }
 
 
         if (
             event.target === profileModal
         ) {
+
             closeProfile();
+
         }
 
     }
