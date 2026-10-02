@@ -1,9 +1,9 @@
-javascript
 /* =====================================================
    CINEVERSE - DATABASE CONNECTED APPLICATION
-   Flask + PyMySQL + Aiven MySQL / XAMPP MariaDB
+   Dynamic Movie Review System
+   Flask + PyMySQL + Aiven MySQL
    ===================================================== */
-
+   
 let movies = [];
 let currentMovies = [];
 let watchlist = [];
