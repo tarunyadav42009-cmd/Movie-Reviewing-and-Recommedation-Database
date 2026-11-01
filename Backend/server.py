@@ -221,27 +221,22 @@ def close_db(conn):
 
 @app.get("/")
 def index():
-
     return send_from_directory(
-        BASE_DIR,
+        FRONTEND_DIR,  
         "index.html"
     )
 
-
 @app.get("/style.css")
 def stylesheet():
-
     return send_from_directory(
-        BASE_DIR,
+        FRONTEND_DIR,  
         "style.css"
     )
 
-
 @app.get("/script.js")
 def javascript():
-
     return send_from_directory(
-        BASE_DIR,
+        FRONTEND_DIR,  
         "script.js"
     )
 
