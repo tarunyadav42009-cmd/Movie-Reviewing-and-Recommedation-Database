@@ -36,8 +36,16 @@ app = Flask(__name__)
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# This tells Flask to go out of the Backend folder and look inside the Frontend folder!
-FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "Frontend"))
+
+# HARDCODE TARGET: Step completely outside the backend context to target your Frontend directory
+FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, os.pardir, "Frontend"))
+
+# Verification prints (These will print out in your Render web dashboard logs so you can see if the paths are right)
+print("=== PRODUCTION PATH CHECK ===")
+print("Backend Running at:", BASE_DIR)
+print("Looking for index.html at:", os.path.join(FRONTEND_DIR, "index.html"))
+print("=============================")
+
 
 
 # ============================================================
